@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Misi Detektif Energi - IPAS Kelas VI</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#1E40AF',
+                            lightBlue: '#3B82F6',
+                            sky: '#E0F2FE',
+                            amber: '#F59E0B',
+                            yellow: '#FBBF24',
+                            emerald: '#10B981',
+                            dark: '#0F172A',
+                            fossilCoal: '#334155',
+                            fossilOil: '#1E293B',
+                            fossilGas: '#D97706'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Fredoka', 'sans-serif'],
+                        body: ['Outfit', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            min-height: 100vh;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        .font-heading {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* Pulse & Bounce animations */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.6)); }
+            50% { filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.9)); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            80% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+
+        .animate-glow {
+            animation: pulseGlow 2.5s infinite;
+        }
+
+        .animate-pop {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Custom Card Hover & Glassmorphic Styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .game-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-btn:active {
+            transform: scale(0.96) translateY(2px);
+        }
+
+        .game-btn:hover {
+            filter: brightness(1.08);
+            transform: translateY(-2px);
+        }
+
+        /* Interactive Card Selection */
+        .selectable-card {
+            transition: all 0.25s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .selectable-card.selected {
+            border-color: #3B82F6;
+            background-color: #EFF6FF;
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+        }
+
+        .selectable-card.correct {
+            border-color: #10B981 !important;
+            background-color: #ECFDF5 !important;
+        }
+
+        .selectable-card.wrong {
+            border-color: #EF4444 !important;
+            background-color: #FEF2F2 !important;
+        }
+
+        /* Hidden Object Highlight */
+        .hidden-object {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hidden-object:hover {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 12px #FBBF24);
+        }
+
+        .hidden-object.found {
+            animation: popIn 0.5s ease;
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(100%);
+        }
+
+        /* Canvas Overlay for Confetti */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3B82F6;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased flex flex-col min-h-screen justify-between relative">
+
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- TOP NAVIGATION & HUD BAR (Hidden on cover) -->
+    <header id="gameHud" class="hidden sticky top-0 z-40 w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-700/60 px-4 py-3">
+        <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
+            <!-- Left Controls & Title -->
+            <div class="flex items-center gap-3">
+                <button onclick="goToMenu()" class="game-btn bg-slate-800 hover:bg-slate-700 text-slate-200 p-2.5 rounded-xl border border-slate-600 flex items-center gap-2 text-xs md:text-sm font-semibold shadow">
+                    <i class="fa-solid fa-house text-amber-400"></i>
+                    <span class="hidden sm:inline">MENU</span>
+                </button>
+                <div class="bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-2">
+                    <span class="text-amber-400 font-heading font-bold text-sm md:text-base flex items-center gap-1">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span id="hudMissionTitle">MISI 1/5</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Center Progress Bar -->
+            <div class="flex-1 max-w-xs mx-2">
+                <div class="flex justify-between text-xs text-slate-300 mb-1 font-semibold">
+                    <span>Kemajuan Misi</span>
+                    <span id="hudProgressPercent">20%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700 p-0.5">
+                    <div id="hudProgressBar" class="bg-gradient-to-r from-amber-400 to-emerald-400 h-full rounded-full transition-all duration-500" style="width: 20%;"></div>
+                </div>
+            </div>
+
+            <!-- Right Score & Sound Toggle -->
+            <div class="flex items-center gap-2">
+                <div class="bg-amber-500/20 border border-amber-500/50 px-3.5 py-1.5 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-star text-amber-400 text-lg animate-bounce"></i>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-amber-300 leading-none font-bold">SKOR</span>
+                        <span id="hudScore" class="font-heading text-lg text-white font-bold leading-tight">0</span>
+                    </div>
+                </div>
+                <button id="audioBtn" onclick="toggleAudio()" class="game-btn bg-slate-800 hover:bg-slate-700 text-slate-300 p-2.5 rounded-xl border border-slate-600">
+                    <i id="audioIcon" class="fa-solid fa-volume-high text-emerald-400"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-6 flex flex-col justify-center">
+
+        <!-- 1. COVER SCREEN -->
+        <section id="screenCover" class="w-full my-auto py-6 animate-pop">
+            <div class="glass-panel rounded-3xl p-6 md:p-10 text-center relative overflow-hidden shadow-2xl border-4 border-amber-400/30">
+                <!-- Decorative energetic background blobs -->
+                <div class="absolute -top-12 -left-12 w-40 h-40 bg-amber-400/20 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute -bottom-12 -right-12 w-48 h-48 bg-blue-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+                <!-- Main Game Badge Header -->
+                <div class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-900 to-indigo-900 text-blue-200 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide uppercase shadow mb-4">
+                    <i class="fa-solid fa-graduation-cap text-amber-400"></i> Game Edukasi IPAS Kelas VI – Fase C
+                </div>
+
+                <!-- Title -->
+                <h1 class="font-heading text-3xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 leading-tight mb-2 tracking-tight">
+                    ⚡ MISI DETEKTIF ENERGI
+                </h1>
+                <p class="font-heading text-lg sm:text-2xl text-blue-700 font-semibold mb-6">
+                    “Jelajahi Energi Fosil di Sekitarmu!”
+                </p>
+
+                <!-- Hero Illustration Graphic Grid -->
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 max-w-3xl mx-auto my-6 p-4 bg-slate-100/80 rounded-2xl border border-slate-200 shadow-inner">
+                    <div class="flex flex-col items-center p-2 bg-white rounded-xl shadow-sm hover:scale-105 transition">
+                        <span class="text-3xl mb-1">🕵️‍♂️</span>
+                        <span class="text-[11px] font-bold text-slate-700">Detektif</span>
+                    </div>
+                    <div class="flex flex-col items-center p-2 bg-white rounded-xl shadow-sm hover:scale-105 transition">
+                        <span class="text-3xl mb-1">🪨</span>
+                        <span class="text-[11px] font-bold text-slate-700">Batu Bara</span>
+                    </div>
+                    <div class="flex flex-col items-center p-2 bg-white rounded-xl shadow-sm hover:scale-105 transition">
+                        <span class="text-3xl mb-1">🛢️</span>
+                        <span class="text-[11px] font-bold text-slate-700">Minyak Bumi</span>
+                    </div>
+                    <div class="flex flex-col items-center p-2 bg-white rounded-xl shadow-sm hover:scale-105 transition">
+                        <span class="text-3xl mb-1">🔥</span>
+                        <span class="text-[11px] font-bold text-slate-700">Gas Alam</span>
+                    </div>
+                    <div class="flex flex-col items-center p-2 bg-white rounded-xl shadow-sm hover:scale-105 transition">
+                        <span class="text-3xl mb-1">🚗</span>
+                        <span class="text-[11px] font-bold text-slate-700">Kendaraan</span>
+                    </div>
+                    <div class="flex flex-col items-center p-2 bg-white rounded-xl shadow-sm hover:scale-105 transition">
+                        <span class="text-3xl mb-1">🏭</span>
+                        <span class="text-[11px] font-bold text-slate-700">Pembangkit</span>
+                    </div>
+                </div>
+
+                <!-- Call to Action Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 my-8">
+                    <button onclick="startGame()" class="game-btn w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-heading text-xl font-bold px-8 py-4 rounded-2xl shadow-xl shadow-amber-500/30 flex items-center justify-center gap-3 border-2 border-amber-300">
+                        <i class="fa-solid fa-play text-2xl animate-pulse"></i>
+                        <span>▶ MULAI MISI</span>
+                    </button>
+                    <button onclick="showInstructionsModal()" class="game-btn w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-white font-heading text-lg font-bold px-6 py-4 rounded-2xl shadow-lg border border-slate-600 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-info text-amber-400 text-xl"></i>
+                        <span>ℹ️ PETUNJUK</span>
+                    </button>
+                </div>
+
+                <!-- Developer Section -->
+                <div class="mt-8 pt-6 border-t border-slate-300/80 max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4 bg-slate-50/90 p-4 rounded-2xl border border-slate-200">
+                    <!-- Photo Frame with Gold Ring -->
+                    <div class="relative w-20 h-20 rounded-full border-4 border-amber-400 overflow-hidden shadow-lg shrink-0 bg-gradient-to-tr from-amber-500 to-blue-600 flex items-center justify-center group hover:scale-105 transition-transform duration-300">
+                        <!-- Inline Vector Avatar for Teacher -->
+                        <svg class="w-full h-full p-1" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background Glow -->
+                            <circle cx="50" cy="50" r="48" fill="#0F172A"/>
+                            <circle cx="50" cy="50" r="44" fill="#1E3A8A"/>
+                            
+                            <!-- Teacher Avatar Graphic -->
+                            <!-- Hijab / Frame -->
+                            <path d="M50 14C31 14 22 28 22 48C22 66 28 84 50 84C72 84 78 66 78 48C78 28 69 14 50 14Z" fill="#F59E0B"/>
+                            
+                            <!-- Inner Face Frame -->
+                            <path d="M33 46C33 32 40 25 50 25C60 25 67 32 67 46C67 55 60 63 50 63C40 63 33 55 33 46Z" fill="#FFFBEB"/>
+                            
+                            <!-- Face -->
+                            <ellipse cx="50" cy="46" rx="14" ry="17" fill="#FDE047"/>
+                            
+                            <!-- Eyes & Smile -->
+                            <circle cx="44" cy="44" r="2.2" fill="#0F172A"/>
+                            <circle cx="56" cy="44" r="2.2" fill="#0F172A"/>
+                            <path d="M45 52C47 54.5 53 54.5 55 52" stroke="#0F172A" stroke-width="2" stroke-linecap="round"/>
+                            
+                            <!-- Blushing Cheeks -->
+                            <circle cx="40" cy="48" r="2.5" fill="#F87171" opacity="0.6"/>
+                            <circle cx="60" cy="48" r="2.5" fill="#F87171" opacity="0.6"/>
+                            
+                            <!-- Teacher Outfit / Blazer -->
+                            <path d="M18 92C18 76 30 68 50 68C70 68 82 76 82 92V100H18V92Z" fill="#1E40AF"/>
+                            <path d="M40 68L50 82L60 68" fill="#F59E0B"/>
+                            
+                            <!-- Teacher Badge Icon -->
+                            <circle cx="72" cy="26" r="10" fill="#F59E0B" stroke="#FFFFFF" stroke-width="2"/>
+                            <text x="72" y="30" font-size="10" font-weight="bold" fill="#0F172A" text-anchor="middle">🎓</text>
+                        </svg>
+                    </div>
+                    <!-- Teacher & School Details -->
+                    <div class="text-center sm:text-left">
+                        <div class="text-[11px] font-extrabold uppercase tracking-widest text-amber-600">PENGEMBANG MEDIA</div>
+                        <h2 class="font-heading text-lg font-bold text-slate-900 leading-snug">Alfi Nurlaili Azzahro’, S.Pd.</h2>
+                        <p class="text-xs text-slate-600 font-medium">SDN 01 Bungku • Kabupaten Morowali</p>
+                        <p class="text-xs text-slate-500 font-semibold mt-0.5">Tahun 2026</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. INSTRUCTIONS SCREEN / MODAL -->
+        <section id="screenInstructions" class="hidden w-full my-auto py-6 animate-pop">
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-3xl mx-auto shadow-2xl border-2 border-blue-400/30">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
+                    <h2 class="font-heading text-2xl sm:text-3xl font-bold text-slate-900 flex items-center gap-3">
+                        <span>🎮</span> CARA BERMAIN DETEKTIF ENERGI
+                    </h2>
+                    <button onclick="goToMenu()" class="text-slate-400 hover:text-slate-600 p-2 text-xl">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4 text-sm sm:text-base text-slate-700">
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl">
+                        <p class="font-bold text-blue-900 mb-1">Selamat datang, Detektif Energi!</p>
+                        <p>Tugasmu adalah menyelesaikan berbagai misi interaktif untuk memahami:</p>
+                        <ul class="list-disc list-inside mt-2 space-y-1 font-medium text-slate-700">
+                            <li>Apa itu energi dan perannya dalam hidup kita.</li>
+                            <li>Mengapa energi sangat penting setiap hari.</li>
+                            <li>Apa saja jenis-jenis sumber energi fosil.</li>
+                            <li>Bagaimana energi fosil dimanfaatkan di sekitar kita.</li>
+                        </ul>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
+                        <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-center">
+                            <span class="text-2xl">⭐</span>
+                            <div class="font-bold text-amber-900 mt-1">Jawaban Benar</div>
+                            <div class="text-xs text-amber-700 font-semibold">+10 sampai +30 Poin</div>
+                        </div>
+                        <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-center">
+                            <span class="text-2xl">💡</span>
+                            <div class="font-bold text-emerald-900 mt-1">Tantangan Bonus</div>
+                            <div class="text-xs text-emerald-700 font-semibold">+20 Poin Ekstra</div>
+                        </div>
+                        <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-200 text-center">
+                            <span class="text-2xl">🔄</span>
+                            <div class="font-bold text-indigo-900 mt-1">Jawaban Salah</div>
+                            <div class="text-xs text-indigo-700 font-semibold">Coba lagi tanpa pinalti!</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-100 p-3 rounded-xl text-xs sm:text-sm text-slate-600">
+                        <strong>Aturan:</strong> Baca setiap pertanyaan & petunjuk dengan cermat. Selesaikan kelima misi untuk meraih gelar kehormatan <strong>“DETEKTIF ENERGI HEBAT”</strong>!
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-200 flex justify-end gap-3">
+                    <button onclick="goToMenu()" class="game-btn px-5 py-2.5 rounded-xl bg-slate-200 text-slate-700 font-bold text-sm">
+                        Kembali
+                    </button>
+                    <button onclick="startMission(1)" class="game-btn px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-heading font-bold text-base shadow-md flex items-center gap-2">
+                        <span>▶ MULAI MISI 1</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. MISSION 1 SCREEN -->
+        <section id="screenMission1" class="hidden w-full my-auto animate-pop">
+            <div class="glass-panel rounded-3xl p-5 sm:p-8 shadow-2xl">
+                <!-- Mission Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-200 pb-3">
+                    <div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-blue-600 bg-blue-100 px-3 py-1 rounded-full">MISI 1 DAN 5</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+                            🔍 APA ITU ENERGI?
+                        </h2>
+                    </div>
+                    <p class="text-xs text-slate-500 font-semibold">Tujuan: Memahami pentingnya energi dalam aktivitas harian</p>
+                </div>
+
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-3.5 rounded-r-xl mb-5 text-sm text-amber-900 font-medium">
+                    <i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i>
+                    <strong>Instruksi Detektif:</strong> Amati gambar-gambar aktivitas di bawah ini. Klik/Pilih <u>semua aktivitas</u> yang membutuhkan energi untuk berlangsung!
+                </div>
+
+                <!-- Interactive Activity Cards Grid -->
+                <div id="m1CardsContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 my-4">
+                    <!-- Card 1 -->
+                    <div onclick="toggleM1Selection(this, 'belajar')" class="selectable-card bg-white p-4 rounded-2xl shadow border-2 border-slate-200 text-center flex flex-col items-center">
+                        <span class="text-4xl mb-2">📚</span>
+                        <h3 class="font-heading font-bold text-slate-800 text-sm sm:text-base">Anak Belajar dengan Lampu</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Membaca buku di bawah cahaya lampu kamar</p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div onclick="toggleM1Selection(this, 'kipas')" class="selectable-card bg-white p-4 rounded-2xl shadow border-2 border-slate-200 text-center flex flex-col items-center">
+                        <span class="text-4xl mb-2">🌀</span>
+                        <h3 class="font-heading font-bold text-slate-800 text-sm sm:text-base">Menyalakan Kipas</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Pendingin udara agar kelas tetap sejuk</p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div onclick="toggleM1Selection(this, 'mobil')" class="selectable-card bg-white p-4 rounded-2xl shadow border-2 border-slate-200 text-center flex flex-col items-center">
+                        <span class="text-4xl mb-2">🚗</span>
+                        <h3 class="font-heading font-bold text-slate-800 text-sm sm:text-base">Mengendarai Mobil</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Perjalanan menuju ke sekolah</p>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div onclick="toggleM1Selection(this, 'tv')" class="selectable-card bg-white p-4 rounded-2xl shadow border-2 border-slate-200 text-center flex flex-col items-center">
+                        <span class="text-4xl mb-2">📺</span>
+                        <h3 class="font-heading font-bold text-slate-800 text-sm sm:text-base">Menonton Televisi</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Melihat siaran berita & pelajaran</p>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div onclick="toggleM1Selection(this, 'masak')" class="selectable-card bg-white p-4 rounded-2xl shadow border-2 border-slate-200 text-center flex flex-col items-center">
+                        <span class="text-4xl mb-2">🍳</span>
+                        <h3 class="font-heading font-bold text-slate-800 text-sm sm:text-base">Ibu Memasak</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Memasak menggunakan kompor gas</p>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div onclick="toggleM1Selection(this, 'berlari')" class="selectable-card bg-white p-4 rounded-2xl shadow border-2 border-slate-200 text-center flex flex-col items-center">
+                        <span class="text-4xl mb-2">🏃</span>
+                        <h3 class="font-heading font-bold text-slate-800 text-sm sm:text-base">Olahraga / Lari</h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Tubuh manusia bergerak saat olahraga</p>
+                    </div>
+                </div>
+
+                <!-- Feedback Message Container -->
+                <div id="m1Feedback" class="hidden my-4 p-4 rounded-2xl bg-emerald-100 border border-emerald-300 text-emerald-900 animate-pop">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🎉</span>
+                        <div>
+                            <h4 class="font-heading font-bold text-lg">✓ HEBAT SEKALI! (+10 Poin)</h4>
+                            <p class="text-xs sm:text-sm">Semua aktivitas manusia—baik alat elektronik, kendaraan, hingga tubuh manusia saat belajar dan berlari—membutuhkan energi!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Actions -->
+                <div class="mt-6 pt-4 border-t border-slate-200 flex justify-between items-center">
+                    <button onclick="resetM1()" class="game-btn px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs sm:text-sm">
+                        🔄 Reset Pilihan
+                    </button>
+                    <button id="m1SubmitBtn" onclick="checkM1()" class="game-btn px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-heading font-bold text-base shadow-lg flex items-center gap-2">
+                        <span>PERIKSA JAWABAN</span>
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                    <button id="m1NextBtn" onclick="startMission(2)" class="hidden game-btn px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-heading font-bold text-base shadow-lg items-center gap-2">
+                        <span>MISI 2 ▶</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. MISSION 2 SCREEN -->
+        <section id="screenMission2" class="hidden w-full my-auto animate-pop">
+            <div class="glass-panel rounded-3xl p-5 sm:p-8 shadow-2xl">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-200 pb-3">
+                    <div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-amber-600 bg-amber-100 px-3 py-1 rounded-full">MISI 2 DAN 5</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+                            🕵️ SIAPA SUMBERNYA?
+                        </h2>
+                    </div>
+                    <p class="text-xs text-slate-500 font-semibold">Tujuan: Mencocokkan sumber energi fosil & pemanfaatannya</p>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3.5 rounded-r-xl mb-5 text-sm text-blue-900 font-medium">
+                    <i class="fa-solid fa-puzzle-piece text-blue-500 mr-2"></i>
+                    <strong>Instruksi:</strong> Pasangkan sumber energi fosil di sebelah kiri dengan aktivitas pemanfaatan yang tepat di sebelah kanan! Klik 1 Sumber, lalu Klik Pasangannya.
+                </div>
+
+                <!-- Matching Game Workspace -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+                    <!-- Left Column: Energy Sources -->
+                    <div class="space-y-3">
+                        <h3 class="font-heading font-bold text-slate-700 text-sm uppercase tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-fire-flame-simple text-amber-500"></i> Sumber Energi Fosil
+                        </h3>
+                        
+                        <div id="src-coal" onclick="selectSource('coal')" class="m2-source-card game-btn p-4 bg-white rounded-2xl border-2 border-slate-200 shadow flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">🪨</span>
+                                <div>
+                                    <div class="font-heading font-bold text-slate-900">Batu Bara</div>
+                                    <div class="text-[11px] text-slate-500">Batuan sedimen hitam padat</div>
+                                </div>
+                            </div>
+                            <span class="m2-status-badge text-xs font-bold text-slate-400">Pilih</span>
+                        </div>
+
+                        <div id="src-oil" onclick="selectSource('oil')" class="m2-source-card game-btn p-4 bg-white rounded-2xl border-2 border-slate-200 shadow flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">🛢️</span>
+                                <div>
+                                    <div class="font-heading font-bold text-slate-900">Minyak Bumi</div>
+                                    <div class="text-[11px] text-slate-500">Cairan pekat hasil tambang bumi</div>
+                                </div>
+                            </div>
+                            <span class="m2-status-badge text-xs font-bold text-slate-400">Pilih</span>
+                        </div>
+
+                        <div id="src-gas" onclick="selectSource('gas')" class="m2-source-card game-btn p-4 bg-white rounded-2xl border-2 border-slate-200 shadow flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">🔥</span>
+                                <div>
+                                    <div class="font-heading font-bold text-slate-900">Gas Alam</div>
+                                    <div class="text-[11px] text-slate-500">Gas fosil alami dari dalam tanah</div>
+                                </div>
+                            </div>
+                            <span class="m2-status-badge text-xs font-bold text-slate-400">Pilih</span>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Uses -->
+                    <div class="space-y-3">
+                        <h3 class="font-heading font-bold text-slate-700 text-sm uppercase tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-bolt text-yellow-500"></i> Pemanfaatan Sehari-hari
+                        </h3>
+
+                        <div id="use-plant" onclick="selectTarget('plant')" class="m2-target-card game-btn p-4 bg-white rounded-2xl border-2 border-slate-200 shadow flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">⚡</span>
+                                <div>
+                                    <div class="font-heading font-bold text-slate-900">Pembangkit Listrik (PLTU)</div>
+                                    <div class="text-[11px] text-slate-500">Menghasilkan listrik skala besar</div>
+                                </div>
+                            </div>
+                            <span class="m2-target-badge text-xs font-bold text-slate-400">Cocokkan</span>
+                        </div>
+
+                        <div id="use-vehicle" onclick="selectTarget('vehicle')" class="m2-target-card game-btn p-4 bg-white rounded-2xl border-2 border-slate-200 shadow flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">🚗</span>
+                                <div>
+                                    <div class="font-heading font-bold text-slate-900">Bahan Bakar Kendaraan</div>
+                                    <div class="text-[11px] text-slate-500">Bensin, solar untuk mobil/motor</div>
+                                </div>
+                            </div>
+                            <span class="m2-target-badge text-xs font-bold text-slate-400">Cocokkan</span>
+                        </div>
+
+                        <div id="use-cooking" onclick="selectTarget('cooking')" class="m2-target-card game-btn p-4 bg-white rounded-2xl border-2 border-slate-200 shadow flex items-center justify-between cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl">🍳</span>
+                                <div>
+                                    <div class="font-heading font-bold text-slate-900">Bahan Bakar Memasak (LPG)</div>
+                                    <div class="text-[11px] text-slate-500">Tabung gas untuk kompor dapur</div>
+                                </div>
+                            </div>
+                            <span class="m2-target-badge text-xs font-bold text-slate-400">Cocokkan</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Message -->
+                <div id="m2Feedback" class="hidden my-4 p-4 rounded-2xl bg-emerald-100 border border-emerald-300 text-emerald-900 animate-pop">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🎉</span>
+                        <div>
+                            <h4 class="font-heading font-bold text-lg">MISI BERHASIL! (+20 Poin)</h4>
+                            <p class="text-xs sm:text-sm">Kamu berhasil mengenali semua pasangan sumber energi fosil dan pemanfaatannya dalam kehidupan sehari-hari!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Action -->
+                <div class="mt-6 pt-4 border-t border-slate-200 flex justify-between items-center">
+                    <button onclick="resetM2()" class="game-btn px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs sm:text-sm">
+                        🔄 Ulangi Cocokkan
+                    </button>
+                    <button id="m2NextBtn" onclick="startMission(3)" class="hidden game-btn px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-heading font-bold text-base shadow-lg items-center gap-2">
+                        <span>MISI 3 ▶</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. MISSION 3 SCREEN -->
+        <section id="screenMission3" class="hidden w-full my-auto animate-pop">
+            <div class="glass-panel rounded-3xl p-5 sm:p-8 shadow-2xl">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3 border-b border-slate-200 pb-3">
+                    <div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">MISI 3 DAN 5</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+                            🔍 TEMUKAN ENERGI FOSIL!
+                        </h2>
+                    </div>
+                    <div class="bg-amber-100 border border-amber-300 px-3 py-1 rounded-xl text-xs font-bold text-amber-900">
+                        Petunjuk Terkumpul: <span id="m3Counter" class="text-base text-amber-600 font-black">0</span> / 3
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-xl mb-4 text-xs sm:text-sm text-amber-900 font-medium">
+                    <i class="fa-solid fa-magnifying-glass text-amber-500 mr-2"></i>
+                    <strong>Instruksi Hidden Object:</strong> Amatilah peta lingkungan perkotaan & sekolah di bawah. Cari dan Klik 3 ikon rahasia energi fosil: 🪨 Batu bara, 🛢️ Minyak bumi, dan 🔥 Gas alam!
+                </div>
+
+                <!-- Interactive SVG Scene for Finding Objects -->
+                <div class="relative w-full h-80 sm:h-96 bg-gradient-to-b from-sky-200 via-sky-100 to-emerald-100 rounded-2xl border-4 border-slate-800 overflow-hidden shadow-inner flex items-center justify-center p-2">
+                    
+                    <!-- Background Environment Graphics -->
+                    <div class="absolute inset-0 pointer-events-none opacity-80">
+                        <!-- Sun -->
+                        <div class="absolute top-4 right-8 text-4xl animate-pulse">☀️</div>
+                        <!-- Clouds -->
+                        <div class="absolute top-6 left-12 text-3xl opacity-80">☁️</div>
+                        <div class="absolute top-10 right-48 text-2xl opacity-70">☁️</div>
+                        
+                        <!-- Buildings Grid Illustration -->
+                        <div class="absolute bottom-16 left-6 text-center">
+                            <span class="text-6xl">🏫</span>
+                            <div class="text-[9px] font-bold bg-white/80 px-1 rounded shadow">Sekolah</div>
+                        </div>
+
+                        <div class="absolute bottom-20 left-1/3 text-center">
+                            <span class="text-6xl">🏡</span>
+                            <div class="text-[9px] font-bold bg-white/80 px-1 rounded shadow">Rumah Kita</div>
+                        </div>
+
+                        <div class="absolute bottom-24 right-1/4 text-center">
+                            <span class="text-7xl">🏭</span>
+                            <div class="text-[9px] font-bold bg-white/80 px-1 rounded shadow">Pembangkit Listrik</div>
+                        </div>
+
+                        <!-- Road and Vehicles -->
+                        <div class="absolute bottom-0 inset-x-0 h-16 bg-slate-700 border-t-4 border-yellow-400 flex items-center justify-around">
+                            <span class="text-3xl">🚌</span>
+                            <span class="text-3xl">🚗</span>
+                            <span class="text-3xl">🛵</span>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Object 1: Coal (Batu bara) hidden near power plant -->
+                    <div id="ho-coal" onclick="findHiddenObject('coal')" class="hidden-object absolute top-1/2 right-1/4 transform -translate-y-6 bg-slate-900/90 text-white p-2.5 rounded-full shadow-2xl border-2 border-amber-400 cursor-pointer">
+                        <span class="text-3xl">🪨</span>
+                    </div>
+
+                    <!-- Hidden Object 2: Oil Barrel (Minyak bumi) hidden near road bus -->
+                    <div id="ho-oil" onclick="findHiddenObject('oil')" class="hidden-object absolute bottom-4 left-1/4 transform translate-y-1 bg-slate-900/90 text-white p-2.5 rounded-full shadow-2xl border-2 border-amber-400 cursor-pointer">
+                        <span class="text-3xl">🛢️</span>
+                    </div>
+
+                    <!-- Hidden Object 3: Gas Flame (Gas alam) hidden near house -->
+                    <div id="ho-gas" onclick="findHiddenObject('gas')" class="hidden-object absolute top-1/3 left-1/3 transform -translate-x-4 bg-slate-900/90 text-white p-2.5 rounded-full shadow-2xl border-2 border-amber-400 cursor-pointer">
+                        <span class="text-3xl">🔥</span>
+                    </div>
+
+                </div>
+
+                <!-- Found Objects Checklist Status Bar -->
+                <div class="grid grid-cols-3 gap-3 my-4 text-center">
+                    <div id="status-coal" class="p-2 bg-slate-100 rounded-xl border border-slate-300 text-xs font-bold text-slate-400 flex items-center justify-center gap-2">
+                        <span>🪨 Batu Bara</span> <i class="fa-solid fa-circle-question"></i>
+                    </div>
+                    <div id="status-oil" class="p-2 bg-slate-100 rounded-xl border border-slate-300 text-xs font-bold text-slate-400 flex items-center justify-center gap-2">
+                        <span>🛢️ Minyak Bumi</span> <i class="fa-solid fa-circle-question"></i>
+                    </div>
+                    <div id="status-gas" class="p-2 bg-slate-100 rounded-xl border border-slate-300 text-xs font-bold text-slate-400 flex items-center justify-center gap-2">
+                        <span>🔥 Gas Alam</span> <i class="fa-solid fa-circle-question"></i>
+                    </div>
+                </div>
+
+                <!-- Feedback Message -->
+                <div id="m3Feedback" class="hidden my-3 p-4 rounded-2xl bg-emerald-100 border border-emerald-300 text-emerald-900 animate-pop">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🎉</span>
+                        <div>
+                            <h4 class="font-heading font-bold text-lg">LUAR BIASA! (+30 Poin)</h4>
+                            <p class="text-xs sm:text-sm">Kamu berhasil menemukan ketiga petunjuk energi fosil yang tersembunyi di sekitar lingkungan sekolah dan kota!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Action -->
+                <div class="mt-4 pt-3 border-t border-slate-200 flex justify-end">
+                    <button id="m3NextBtn" onclick="startMission(4)" class="hidden game-btn px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-heading font-bold text-base shadow-lg items-center gap-2">
+                        <span>MISI 4 ▶</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. MISSION 4 SCREEN -->
+        <section id="screenMission4" class="hidden w-full my-auto animate-pop">
+            <div class="glass-panel rounded-3xl p-5 sm:p-8 shadow-2xl max-w-3xl mx-auto">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-200 pb-3">
+                    <div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-purple-600 bg-purple-100 px-3 py-1 rounded-full">MISI 4 DAN 5</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+                            💡 MENGAPA ENERGI PENTING?
+                        </h2>
+                    </div>
+                    <p class="text-xs text-slate-500 font-semibold">Tujuan: Menganalisis kondisi tanpa energi</p>
+                </div>
+
+                <!-- Story Scenario Box -->
+                <div class="bg-slate-900 text-white p-5 rounded-2xl shadow-lg mb-6 border-2 border-amber-400/40 relative overflow-hidden">
+                    <div class="flex items-start gap-4">
+                        <span class="text-4xl">🌆</span>
+                        <div>
+                            <h3 class="font-heading text-amber-400 font-bold text-lg">Studi Kasus Detektif: "Suatu Pagi Tanpa Energi"</h3>
+                            <p class="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+                                Bayangkan suatu pagi kamu bangun dan tidak ada energi yang dapat digunakan sama sekali: Lampu kelas tidak bisa menyala, kendaraan mogok karena tidak ada bahan bakar, komputer sekolah mati, dan kompor tidak dapat menyalakan api.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block font-heading font-bold text-slate-900 text-base sm:text-lg mb-3">
+                        Berdasarkan situasi di atas, apa kesimpulan yang paling tepat tentang peran energi?
+                    </label>
+
+                    <div class="space-y-3">
+                        <button onclick="checkM4Answer('A', this)" class="m4-opt game-btn w-full p-4 bg-white hover:bg-slate-50 text-left rounded-2xl border-2 border-slate-200 shadow text-slate-800 font-medium text-sm flex items-start gap-3">
+                            <span class="bg-slate-200 px-2.5 py-1 rounded-lg font-bold text-xs">A</span>
+                            <span>Energi hanya dibutuhkan oleh kendaraan bermotor di jalan raya.</span>
+                        </button>
+
+                        <button onclick="checkM4Answer('B', this)" class="m4-opt game-btn w-full p-4 bg-white hover:bg-slate-50 text-left rounded-2xl border-2 border-slate-200 shadow text-slate-800 font-medium text-sm flex items-start gap-3">
+                            <span class="bg-slate-200 px-2.5 py-1 rounded-lg font-bold text-xs">B</span>
+                            <span>Energi tidak terlalu penting bagi kelangsungan hidup manusia.</span>
+                        </button>
+
+                        <button onclick="checkM4Answer('C', this)" class="m4-opt game-btn w-full p-4 bg-white hover:bg-slate-50 text-left rounded-2xl border-2 border-slate-200 shadow text-slate-800 font-medium text-sm flex items-start gap-3">
+                            <span class="bg-slate-200 px-2.5 py-1 rounded-lg font-bold text-xs">C</span>
+                            <span class="font-bold text-blue-900">Energi memiliki peran sangat penting dalam membantu berbagai aktivitas harian manusia.</span>
+                        </button>
+
+                        <button onclick="checkM4Answer('D', this)" class="m4-opt game-btn w-full p-4 bg-white hover:bg-slate-50 text-left rounded-2xl border-2 border-slate-200 shadow text-slate-800 font-medium text-sm flex items-start gap-3">
+                            <span class="bg-slate-200 px-2.5 py-1 rounded-lg font-bold text-xs">D</span>
+                            <span>Energi hanya dimanfaatkan ketika kita berada di gedung sekolah.</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Feedback Container -->
+                <div id="m4Feedback" class="hidden my-4 p-4 rounded-2xl border animate-pop"></div>
+
+                <!-- Bottom Action -->
+                <div class="mt-6 pt-4 border-t border-slate-200 flex justify-end">
+                    <button id="m4NextBtn" onclick="startMission(5)" class="hidden game-btn px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-heading font-bold text-base shadow-lg items-center gap-2">
+                        <span>MISI TERAKHIR (MISI 5) ▶</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. MISSION 5 SCREEN -->
+        <section id="screenMission5" class="hidden w-full my-auto animate-pop">
+            <div class="glass-panel rounded-3xl p-5 sm:p-8 shadow-2xl max-w-3xl mx-auto">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-200 pb-3">
+                    <div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-red-600 bg-red-100 px-3 py-1 rounded-full">MISI ULTIMATE (5/5)</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+                            🏆 TANTANGAN DETEKTIF UTAMA
+                        </h2>
+                    </div>
+                    <div class="bg-amber-100 px-3 py-1 rounded-full text-xs font-bold text-amber-900">
+                        Bobot: +30 Poin
+                    </div>
+                </div>
+
+                <!-- Detective Story Prompt -->
+                <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white p-5 rounded-2xl shadow-lg mb-6 border border-blue-400/30">
+                    <p class="text-xs uppercase font-extrabold text-amber-400 tracking-wider">Laporan Investigasi Sekolah</p>
+                    <p class="text-sm sm:text-base mt-1">
+                        "Sebagai Detektif Energi Sekolah, kamu mendata aktivitas pagi: Bus sekolah menggunakan BBM, lampu & AC kelas menyala dengan listrik PLTU batu bara, serta ibu kantin memasak dengan LPG gas alam."
+                    </p>
+                </div>
+
+                <!-- Multi-part Question -->
+                <div class="space-y-6">
+                    <!-- Part 1 -->
+                    <div>
+                        <label class="block font-heading font-bold text-slate-900 text-sm sm:text-base mb-2">
+                            1. Mengapa energi fosil sangat vital bagi kehidupan sehari-hari kita saat ini?
+                        </label>
+                        <select id="m5Part1" class="w-full p-3.5 bg-white rounded-xl border-2 border-slate-300 text-slate-800 font-semibold text-sm focus:border-blue-500 outline-none">
+                            <option value="">-- Pilih Analisis Detektif --</option>
+                            <option value="wrong1">Karena energi fosil tidak akan pernah habis meskipun dipakai terus.</option>
+                            <option value="correct">Karena sebagian besar sarana transportasi, Pembangkit Listrik, dan peralatan memasak kita masih bergantung padanya.</option>
+                            <option value="wrong2">Karena energi fosil diproduksi secara instan oleh manusia setiap hari.</option>
+                        </select>
+                    </div>
+
+                    <!-- Part 2 -->
+                    <div>
+                        <label class="block font-heading font-bold text-slate-900 text-sm sm:text-base mb-2">
+                            2. Apa dampak utama yang terjadi jika sumber energi tiba-tiba tidak tersedia sama sekali?
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <label class="p-3 bg-white border-2 border-slate-200 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox" name="m5Impact" value="1" class="w-4 h-4 text-blue-600 rounded">
+                                <span class="text-xs font-semibold text-slate-700">Aktivitas produksi & transportasi terhenti</span>
+                            </label>
+                            <label class="p-3 bg-white border-2 border-slate-200 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox" name="m5Impact" value="2" class="w-4 h-4 text-blue-600 rounded">
+                                <span class="text-xs font-semibold text-slate-700">Peralatan elektronik & penerangan mati</span>
+                            </label>
+                            <label class="p-3 bg-white border-2 border-slate-200 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox" name="m5Impact" value="3" class="w-4 h-4 text-blue-600 rounded">
+                                <span class="text-xs font-semibold text-slate-700">Kehidupan manusia menjadi jauh lebih mudah</span>
+                            </label>
+                            <label class="p-3 bg-white border-2 border-slate-200 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-slate-50">
+                                <input type="checkbox" name="m5Impact" value="4" class="w-4 h-4 text-blue-600 rounded">
+                                <span class="text-xs font-semibold text-slate-700">Pekerjaan harian menjadi jauh lebih lambat</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback -->
+                <div id="m5Feedback" class="hidden my-4 p-4 rounded-2xl border animate-pop"></div>
+
+                <!-- Bottom Action -->
+                <div class="mt-6 pt-4 border-t border-slate-200 flex justify-between items-center">
+                    <button onclick="submitM5()" class="game-btn px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-heading font-bold text-base shadow-lg flex items-center gap-2">
+                        <span>KIRIM ANALISIS</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                    <button id="m5BonusBtn" onclick="startBonusRound()" class="hidden game-btn px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-heading font-bold text-base shadow-lg items-center gap-2">
+                        <span>ROUND BONUS BENAR/SALAH ▶</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. BONUS ROUND SCREEN -->
+        <section id="screenBonus" class="hidden w-full my-auto animate-pop">
+            <div class="glass-panel rounded-3xl p-5 sm:p-8 shadow-2xl max-w-3xl mx-auto">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                    <div>
+                        <span class="text-xs font-extrabold uppercase tracking-wider text-purple-600 bg-purple-100 px-3 py-1 rounded-full">ROUND BONUS EKSTRA</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+                            ⚡ BENAR ATAU SALAH?
+                        </h2>
+                    </div>
+                    <div class="bg-purple-100 text-purple-900 px-3 py-1 rounded-xl text-xs font-bold">
+                        Pernyataan <span id="bonusIndex">1</span>/6
+                    </div>
+                </div>
+
+                <!-- Current Question Card -->
+                <div class="bg-white p-6 sm:p-8 rounded-2xl border-2 border-purple-200 shadow-md text-center my-6">
+                    <span class="text-4xl mb-3 block">🧐</span>
+                    <p id="bonusStatementText" class="font-heading text-lg sm:text-xl font-bold text-slate-800 leading-snug">
+                        "Energi dibutuhkan manusia untuk melakukan berbagai aktivitas sehari-hari."
+                    </p>
+                </div>
+
+                <!-- True / False Buttons -->
+                <div class="grid grid-cols-2 gap-4 max-w-md mx-auto my-6">
+                    <button onclick="answerBonus(true)" class="game-btn bg-emerald-500 hover:bg-emerald-400 text-white font-heading font-bold text-xl py-4 rounded-2xl shadow-lg border-2 border-emerald-300 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-check text-2xl"></i>
+                        <span>BENAR</span>
+                    </button>
+                    <button onclick="answerBonus(false)" class="game-btn bg-red-500 hover:bg-red-400 text-white font-heading font-bold text-xl py-4 rounded-2xl shadow-lg border-2 border-red-300 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-xmark text-2xl"></i>
+                        <span>SALAH</span>
+                    </button>
+                </div>
+
+                <!-- Progress status indicator -->
+                <div class="flex justify-center gap-2 mt-4" id="bonusDots">
+                    <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                    <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                    <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                    <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                    <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                    <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. FINAL SCORE & BADGE SCREEN -->
+        <section id="screenFinal" class="hidden w-full my-auto py-6 animate-pop">
+            <div class="glass-panel rounded-3xl p-6 sm:p-10 text-center max-w-3xl mx-auto shadow-2xl border-4 border-amber-400/40 relative overflow-hidden">
+                
+                <div class="inline-flex items-center gap-2 bg-amber-100 text-amber-900 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
+                    🏆 MISI SELESAI
+                </div>
+
+                <h2 class="font-heading text-3xl sm:text-5xl font-extrabold text-slate-900">
+                    HASIL MISI DETEKTIF
+                </h2>
+
+                <!-- Final Score Circle -->
+                <div class="my-6 inline-flex flex-col items-center justify-center w-36 h-36 sm:w-44 sm:h-44 rounded-full bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 border-8 border-white shadow-2xl animate-glow">
+                    <span class="text-xs font-extrabold uppercase text-amber-950 tracking-wider">SKOR AKHIR</span>
+                    <span id="finalScoreVal" class="font-heading text-4xl sm:text-6xl font-black text-slate-950 leading-none">0</span>
+                    <span class="text-xs font-bold text-amber-900 mt-1">POIN</span>
+                </div>
+
+                <!-- Badge Display Box -->
+                <div id="badgeContainer" class="p-6 rounded-2xl bg-slate-900 text-white max-w-lg mx-auto shadow-xl border-2 border-amber-400 my-4">
+                    <span id="badgeIcon" class="text-5xl mb-2 block">🥇</span>
+                    <h3 id="badgeTitle" class="font-heading text-2xl font-extrabold text-amber-400">DETEKTIF ENERGI HEBAT!</h3>
+                    <p id="badgeDesc" class="text-xs sm:text-sm text-slate-300 mt-2 font-medium">
+                        "Selamat! Kamu sangat memahami pentingnya energi dan sumber energi fosil dalam kehidupan sehari-hari."
+                    </p>
+                </div>
+
+                <!-- Educational Closing Reflection -->
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl max-w-lg mx-auto text-blue-900 text-xs sm:text-sm font-medium my-4">
+                    ⚡ <strong>“ENERGI MEMBANTU KITA MENJALANI KEHIDUPAN.”</strong><br>
+                    Sekarang kamu telah membuktikan bahwa energi memiliki peran sangat krusial. Teruslah belajar menggunakan energi secara bijak dan bertanggung jawab!
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
+                    <button onclick="startGame()" class="game-btn w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-slate-950 font-heading font-bold px-6 py-3 rounded-xl shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>🔄 MAIN LAGI</span>
+                    </button>
+                    <button onclick="openMaterialModal()" class="game-btn w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-heading font-bold px-6 py-3 rounded-xl shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>📚 PELAJARI MATERI</span>
+                    </button>
+                    <button onclick="goToMenu()" class="game-btn w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-white font-heading font-bold px-6 py-3 rounded-xl shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-house"></i>
+                        <span>🏠 KEMBALI KE MENU</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. MATERIAL SUMMARY MODAL -->
+        <div id="modalMaterial" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+            <div class="glass-panel rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border-2 border-blue-400">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                    <h2 class="font-heading text-2xl font-bold text-slate-900 flex items-center gap-2">
+                        📖 Ringkasan Materi IPAS: Energi Fosil
+                    </h2>
+                    <button onclick="closeMaterialModal()" class="text-slate-400 hover:text-slate-600 text-2xl p-1">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+                        <h3 class="font-heading font-bold text-amber-900 text-base mb-1">1. Apa Itu Energi?</h3>
+                        <p>Energi adalah kemampuan untuk melakukan usaha atau kerja. Tanpa energi, manusia tidak dapat bergerak, lampu tidak dapat menyala, dan kendaraan tidak dapat berjalan.</p>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                        <h3 class="font-heading font-bold text-blue-900 text-base mb-1">2. Tiga Jenis Utama Energi Fosil:</h3>
+                        <ul class="list-disc list-inside space-y-1 font-medium">
+                            <li><strong>🪨 Batu Bara:</strong> Batuan sedimen fosil padat yang utamanya dimanfaatkan sebagai bahan bakar Pembangkit Listrik Tenaga Uap (PLTU).</li>
+                            <li><strong>🛢️ Minyak Bumi:</strong> Fosil cair yang diolah menjadi bahan bakar kendaraan seperti bensin, solar, dan avtur.</li>
+                            <li><strong>🔥 Gas Alam:</strong> Fosil gas alami dari perut bumi yang diolah menjadi LPG untuk kompor dapur dan industri.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+                        <h3 class="font-heading font-bold text-emerald-900 text-base mb-1">3. Mengapa Harus Hemat Energi Fosil?</h3>
+                        <p>Energi fosil terbentuk dari sisa-sisa organisme purba yang terkubur selama <u>jutaan tahun</u>. Karena itu, jumlahnya sangat terbatas (tak terbarukan). Kita harus menggunakan energi fosil secara hemat dan bijak!</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-200 text-right">
+                    <button onclick="closeMaterialModal()" class="game-btn px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm">
+                        Tutup Ringkasan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full text-center py-3 text-[11px] text-slate-400 bg-slate-950/60 border-t border-slate-800/60">
+        Media Pembelajaran IPAS Kelas VI SD • SDN 01 Bungku ( Morowali, 2026 )
+    </footer>
+
+    <script>
+        /* STATE MANAGEMENT */
+        const gameState = {
+            currentMission: 0,
+            score: 0,
+            audioMuted: false,
+            
+            // Mission 1 State
+            m1Selected: new Set(),
+
+            // Mission 2 State
+            m2Source: null,
+            m2Matches: {},
+
+            // Mission 3 State
+            m3Found: { coal: false, oil: false, gas: false },
+
+            // Mission 5 State
+            m5Done: false,
+
+            // Bonus Round State
+            bonusIndex: 0,
+            bonusScore: 0
+        };
+
+        /* WEB AUDIO API SYNTHESIZER (No external sound file dependency) */
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            if (gameState.audioMuted) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(180, now + 0.15);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'fanfare') {
+                    // Quick celebratory chime sequence
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const o = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        o.connect(g);
+                        g.connect(ctx.destination);
+                        o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                        g.gain.setValueAtTime(0.2, now + idx * 0.12);
+                        g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.3);
+                        o.start(now + idx * 0.12);
+                        o.stop(now + idx * 0.12 + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio not allowed yet");
+            }
+        }
+
+        function toggleAudio() {
+            gameState.audioMuted = !gameState.audioMuted;
+            const icon = document.getElementById('audioIcon');
+            if (gameState.audioMuted) {
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+            } else {
+                icon.className = 'fa-solid fa-volume-high text-emerald-400';
+                playSound('click');
+            }
+        }
+
+        /* NAVIGATION ENGINE */
+        const allScreens = [
+            'screenCover',
+            'screenInstructions',
+            'screenMission1',
+            'screenMission2',
+            'screenMission3',
+            'screenMission4',
+            'screenMission5',
+            'screenBonus',
+            'screenFinal'
+        ];
+
+        function hideAllScreens() {
+            allScreens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+        }
+
+        function goToMenu() {
+            playSound('click');
+            hideAllScreens();
+            document.getElementById('screenCover').classList.remove('hidden');
+            document.getElementById('gameHud').classList.add('hidden');
+        }
+
+        function showInstructionsModal() {
+            playSound('click');
+            hideAllScreens();
+            document.getElementById('screenInstructions').classList.remove('hidden');
+            document.getElementById('gameHud').classList.add('hidden');
+        }
+
+        function updateHud(missionNum, scoreVal) {
+            document.getElementById('gameHud').classList.remove('hidden');
+            document.getElementById('hudMissionTitle').innerText = `MISI ${missionNum}/5`;
+            const pct = Math.min(100, Math.round((missionNum / 5) * 100));
+            document.getElementById('hudProgressPercent').innerText = `${pct}%`;
+            document.getElementById('hudProgressBar').style.width = `${pct}%`;
+            document.getElementById('hudScore').innerText = scoreVal;
+        }
+
+        function addScore(pts) {
+            gameState.score += pts;
+            document.getElementById('hudScore').innerText = gameState.score;
+        }
+
+        function startGame() {
+            playSound('click');
+            gameState.score = 0;
+            gameState.currentMission = 1;
+            resetM1();
+            resetM2();
+            resetM3();
+            resetM4();
+            resetM5();
+            startMission(1);
+        }
+
+        function startMission(num) {
+            playSound('click');
+            gameState.currentMission = num;
+            hideAllScreens();
+            updateHud(num, gameState.score);
+
+            if (num === 1) document.getElementById('screenMission1').classList.remove('hidden');
+            else if (num === 2) document.getElementById('screenMission2').classList.remove('hidden');
+            else if (num === 3) document.getElementById('screenMission3').classList.remove('hidden');
+            else if (num === 4) document.getElementById('screenMission4').classList.remove('hidden');
+            else if (num === 5) document.getElementById('screenMission5').classList.remove('hidden');
+        }
+
+        /* MISSION 1 LOGIC */
+        function toggleM1Selection(cardEl, key) {
+            playSound('click');
+            if (gameState.m1Selected.has(key)) {
+                gameState.m1Selected.delete(key);
+                cardEl.classList.remove('selected');
+            } else {
+                gameState.m1Selected.add(key);
+                cardEl.classList.add('selected');
+            }
+        }
+
+        function resetM1() {
+            gameState.m1Selected.clear();
+            const cards = document.querySelectorAll('#m1CardsContainer .selectable-card');
+            cards.forEach(c => c.className = 'selectable-card bg-white p-4 rounded-2xl shadow border-2 border-slate-200 text-center flex flex-col items-center');
+            document.getElementById('m1Feedback').classList.add('hidden');
+            document.getElementById('m1SubmitBtn').classList.remove('hidden');
+            document.getElementById('m1NextBtn').classList.add('hidden');
+        }
+
+        function checkM1() {
+            // All 6 require energy!
+            if (gameState.m1Selected.size === 6) {
+                playSound('correct');
+                addScore(10);
+                const cards = document.querySelectorAll('#m1CardsContainer .selectable-card');
+                cards.forEach(c => c.classList.add('correct'));
+                document.getElementById('m1Feedback').classList.remove('hidden');
+                document.getElementById('m1SubmitBtn').classList.add('hidden');
+                document.getElementById('m1NextBtn').classList.remove('hidden');
+                document.getElementById('m1NextBtn').classList.add('flex');
+            } else {
+                playSound('wrong');
+                alert("Detektif! Amatilah kembali. Apakah ada aktivitas di atas yang BISA dilakukan TANPA energi sama sekali? (Petunjuk: Pilihlah SEMUA 6 gambar!)");
+            }
+        }
+
+        /* MISSION 2 LOGIC */
+        const m2CorrectPairs = {
+            coal: 'plant',
+            oil: 'vehicle',
+            gas: 'cooking'
+        };
+
+        function resetM2() {
+            gameState.m2Source = null;
+            gameState.m2Matches = {};
+            document.querySelectorAll('.m2-source-card').forEach(el => {
+                el.className = 'm2-source-card game-btn p-4 bg-white rounded-2xl border-2 border-slate-200 shadow flex items-center justify-between cursor-pointer';
+                el.querySelector('.m2-status-badge').innerText = 'Pilih';
+                el.querySelector('.m2-status-badge').className = 'm2-status-badge text-xs font-bold text-slate-400';
+            });
+            document.querySelectorAll('.m2-target-card').forEach(el => {
+                el.className = 'm2-target-card game-btn p-4 bg-white rounded-2xl border-2 border-slate-200 shadow flex items-center justify-between cursor-pointer';
+                el.querySelector('.m2-target-badge').innerText = 'Cocokkan';
+                el.querySelector('.m2-target-badge').className = 'm2-target-badge text-xs font-bold text-slate-400';
+            });
+            document.getElementById('m2Feedback').classList.add('hidden');
+            document.getElementById('m2NextBtn').classList.add('hidden');
+        }
+
+        function selectSource(srcKey) {
+            playSound('click');
+            gameState.m2Source = srcKey;
+            document.querySelectorAll('.m2-source-card').forEach(el => {
+                if (el.id === `src-${srcKey}`) {
+                    el.classList.add('border-blue-500', 'bg-blue-50');
+                    el.querySelector('.m2-status-badge').innerText = 'Dipilih';
+                    el.querySelector('.m2-status-badge').className = 'm2-status-badge text-xs font-bold text-blue-600';
+                } else if (!Object.keys(gameState.m2Matches).includes(el.id.replace('src-', ''))) {
+                    el.classList.remove('border-blue-500', 'bg-blue-50');
+                    el.querySelector('.m2-status-badge').innerText = 'Pilih';
+                    el.querySelector('.m2-status-badge').className = 'm2-status-badge text-xs font-bold text-slate-400';
+                }
+            });
+        }
+
+        function selectTarget(targetKey) {
+            if (!gameState.m2Source) {
+                playSound('wrong');
+                alert("Pilih salah satu Sumber Energi Fosil di sebelah kiri terlebih dahulu!");
+                return;
+            }
+
+            const srcKey = gameState.m2Source;
+            if (m2CorrectPairs[srcKey] === targetKey) {
+                playSound('correct');
+                gameState.m2Matches[srcKey] = targetKey;
+
+                // Update Source UI
+                const srcEl = document.getElementById(`src-${srcKey}`);
+                srcEl.className = 'm2-source-card p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-500 shadow flex items-center justify-between pointer-events-none';
+                srcEl.querySelector('.m2-status-badge').innerText = '✓ Cocok';
+                srcEl.querySelector('.m2-status-badge').className = 'm2-status-badge text-xs font-bold text-emerald-600';
+
+                // Update Target UI
+                const targetEl = document.getElementById(`use-${targetKey}`);
+                targetEl.className = 'm2-target-card p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-500 shadow flex items-center justify-between pointer-events-none';
+                targetEl.querySelector('.m2-target-badge').innerText = '✓ Cocok';
+                targetEl.querySelector('.m2-target-badge').className = 'm2-target-badge text-xs font-bold text-emerald-600';
+
+                gameState.m2Source = null;
+
+                // Check completion
+                if (Object.keys(gameState.m2Matches).length === 3) {
+                    addScore(20);
+                    document.getElementById('m2Feedback').classList.remove('hidden');
+                    document.getElementById('m2NextBtn').classList.remove('hidden');
+                    document.getElementById('m2NextBtn').classList.add('flex');
+                }
+            } else {
+                playSound('wrong');
+                alert("Pasangan belum tepat! Coba pikirkan kembali pemanfaatan utama dari sumber energi tersebut.");
+            }
+        }
+
+        /* MISSION 3 LOGIC */
+        function resetM3() {
+            gameState.m3Found = { coal: false, oil: false, gas: false };
+            document.getElementById('m3Counter').innerText = '0';
+            ['coal', 'oil', 'gas'].forEach(key => {
+                const ho = document.getElementById(`ho-${key}`);
+                if (ho) ho.classList.remove('found');
+                const st = document.getElementById(`status-${key}`);
+                if (st) st.className = 'p-2 bg-slate-100 rounded-xl border border-slate-300 text-xs font-bold text-slate-400 flex items-center justify-center gap-2';
+            });
+            document.getElementById('m3Feedback').classList.add('hidden');
+            document.getElementById('m3NextBtn').classList.add('hidden');
+        }
+
+        function findHiddenObject(key) {
+            if (gameState.m3Found[key]) return;
+            playSound('correct');
+            gameState.m3Found[key] = true;
+
+            const ho = document.getElementById(`ho-${key}`);
+            if (ho) ho.classList.add('found');
+
+            const labelMap = { coal: '🪨 Batu Bara', oil: '🛢️ Minyak Bumi', gas: '🔥 Gas Alam' };
+            const st = document.getElementById(`status-${key}`);
+            if (st) {
+                st.className = 'p-2 bg-emerald-100 border border-emerald-300 text-xs font-bold text-emerald-900 flex items-center justify-center gap-2';
+                st.innerHTML = `<span>${labelMap[key]}</span> <i class="fa-solid fa-circle-check text-emerald-600"></i>`;
+            }
+
+            const count = Object.values(gameState.m3Found).filter(Boolean).length;
+            document.getElementById('m3Counter').innerText = count;
+
+            if (count === 3) {
+                addScore(30);
+                document.getElementById('m3Feedback').classList.remove('hidden');
+                document.getElementById('m3NextBtn').classList.remove('hidden');
+                document.getElementById('m3NextBtn').classList.add('flex');
+            }
+        }
+
+        /* MISSION 4 LOGIC */
+        function resetM4() {
+            document.querySelectorAll('.m4-opt').forEach(btn => {
+                btn.className = 'm4-opt game-btn w-full p-4 bg-white hover:bg-slate-50 text-left rounded-2xl border-2 border-slate-200 shadow text-slate-800 font-medium text-sm flex items-start gap-3';
+            });
+            document.getElementById('m4Feedback').classList.add('hidden');
+            document.getElementById('m4NextBtn').classList.add('hidden');
+        }
+
+        function checkM4Answer(ans, btnEl) {
+            playSound('click');
+            resetM4();
+            if (ans === 'C') {
+                playSound('correct');
+                btnEl.className = 'm4-opt game-btn w-full p-4 bg-emerald-50 text-left rounded-2xl border-2 border-emerald-500 shadow text-emerald-950 font-bold text-sm flex items-start gap-3 pointer-events-none';
+                
+                const fb = document.getElementById('m4Feedback');
+                fb.className = 'my-4 p-4 rounded-2xl bg-emerald-100 border border-emerald-300 text-emerald-900 animate-pop';
+                fb.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🌟</span>
+                        <div>
+                            <h4 class="font-heading font-bold text-lg">BENAR SEKALI! (+20 Poin)</h4>
+                            <p class="text-xs sm:text-sm">Energi sangat penting karena membantu manusia melakukan berbagai aktivitas sehari-hari dari bangun tidur hingga malam hari!</p>
+                        </div>
+                    </div>
+                `;
+                fb.classList.remove('hidden');
+                addScore(20);
+
+                document.getElementById('m4NextBtn').classList.remove('hidden');
+                document.getElementById('m4NextBtn').classList.add('flex');
+            } else {
+                playSound('wrong');
+                btnEl.className = 'm4-opt game-btn w-full p-4 bg-red-50 text-left rounded-2xl border-2 border-red-400 shadow text-red-900 font-medium text-sm flex items-start gap-3';
+                const fb = document.getElementById('m4Feedback');
+                fb.className = 'my-4 p-4 rounded-2xl bg-red-100 border border-red-300 text-red-900 animate-pop';
+                fb.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🤔</span>
+                        <div>
+                            <h4 class="font-heading font-bold text-base">ANALISIS BELUM TEPAT</h4>
+                            <p class="text-xs">Coba bayangkan kembali: Jika lampu mati, kendaraan mogok, dan komputer mati, apakah energi hanya penting di tempat tertentu?</p>
+                        </div>
+                    </div>
+                `;
+                fb.classList.remove('hidden');
+            }
+        }
+
+        /* MISSION 5 LOGIC */
+        function resetM5() {
+            document.getElementById('m5Part1').value = '';
+            document.querySelectorAll('input[name="m5Impact"]').forEach(cb => cb.checked = false);
+            document.getElementById('m5Feedback').classList.add('hidden');
+            document.getElementById('m5BonusBtn').classList.add('hidden');
+            gameState.m5Done = false;
+        }
+
+        function submitM5() {
+            if (gameState.m5Done) return;
+            const p1 = document.getElementById('m5Part1').value;
+            const checkedBoxes = Array.from(document.querySelectorAll('input[name="m5Impact"]:checked')).map(c => c.value);
+
+            if (!p1 || checkedBoxes.length === 0) {
+                playSound('wrong');
+                alert("Lengkapi kedua pertanyaan analisis Detektif terlebih dahulu!");
+                return;
+            }
+
+            const p1Correct = (p1 === 'correct');
+            const p2Correct = checkedBoxes.includes('1') && checkedBoxes.includes('2') && checkedBoxes.includes('4') && !checkedBoxes.includes('3');
+
+            const fb = document.getElementById('m5Feedback');
+
+            if (p1Correct && p2Correct) {
+                playSound('correct');
+                gameState.m5Done = true;
+                addScore(30);
+
+                fb.className = 'my-4 p-4 rounded-2xl bg-emerald-100 border border-emerald-300 text-emerald-900 animate-pop';
+                fb.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">👑</span>
+                        <div>
+                            <h4 class="font-heading font-bold text-lg">ANALISIS DETEKTIF SEMPURNA! (+30 Poin)</h4>
+                            <p class="text-xs sm:text-sm">Kamu menganalisis ketergantungan manusia pada energi fosil secara mendalam. Tanpa energi, roda kehidupan dan aktivitas masyarakat akan menjadi sangat terhambat!</p>
+                        </div>
+                    </div>
+                `;
+                fb.classList.remove('hidden');
+
+                document.getElementById('m5BonusBtn').classList.remove('hidden');
+                document.getElementById('m5BonusBtn').classList.add('flex');
+            } else {
+                playSound('wrong');
+                fb.className = 'my-4 p-4 rounded-2xl bg-amber-100 border border-amber-300 text-amber-900 animate-pop';
+                fb.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🧐</span>
+                        <div>
+                            <h4 class="font-heading font-bold text-base">PERIKSA KEMBALI ANALISIS</h4>
+                            <p class="text-xs">Pastikan kamu memilih alasan utama ketergantungan fosil pada soal #1 dan mencentang opsi dampak negatif yang tepat pada soal #2 (Ingat: Kehidupan TIDAK menjadi lebih mudah tanpa energi!).</p>
+                        </div>
+                    </div>
+                `;
+                fb.classList.remove('hidden');
+            }
+        }
+
+        /* BONUS ROUND LOGIC */
+        const bonusQuestions = [
+            { text: "Energi dibutuhkan manusia untuk melakukan berbagai aktivitas sehari-hari.", answer: true },
+            { text: "Batu bara termasuk salah satu jenis energi fosil.", answer: true },
+            { text: "Minyak bumi merupakan salah satu sumber energi fosil.", answer: true },
+            { text: "Gas alam bukan termasuk sumber energi fosil.", answer: false },
+            { text: "Kendaraan bermotor membutuhkan energi agar dapat bergerak.", answer: true },
+            { text: "Energi hanya digunakan manusia untuk menyalakan lampu saja.", answer: false }
+        ];
+
+        function startBonusRound() {
+            playSound('click');
+            hideAllScreens();
+            document.getElementById('screenBonus').classList.remove('hidden');
+            gameState.bonusIndex = 0;
+            gameState.bonusScore = 0;
+            showBonusQuestion();
+        }
+
+        function showBonusQuestion() {
+            const q = bonusQuestions[gameState.bonusIndex];
+            document.getElementById('bonusIndex').innerText = gameState.bonusIndex + 1;
+            document.getElementById('bonusStatementText').innerText = `"${q.text}"`;
+
+            // Update status dots
+            const dots = document.getElementById('bonusDots').children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i < gameState.bonusIndex) {
+                    dots[i].className = 'w-3 h-3 rounded-full bg-emerald-500';
+                } else if (i === gameState.bonusIndex) {
+                    dots[i].className = 'w-3 h-3 rounded-full bg-amber-400 animate-ping';
+                } else {
+                    dots[i].className = 'w-3 h-3 rounded-full bg-slate-300';
+                }
+            }
+        }
+
+        function answerBonus(userAns) {
+            const q = bonusQuestions[gameState.bonusIndex];
+            if (userAns === q.answer) {
+                playSound('correct');
+                addScore(10);
+            } else {
+                playSound('wrong');
+            }
+
+            gameState.bonusIndex++;
+            if (gameState.bonusIndex < bonusQuestions.length) {
+                showBonusQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        /* FINAL SCORE & CONFETTI ENGINE */
+        function finishGame() {
+            playSound('fanfare');
+            hideAllScreens();
+            document.getElementById('gameHud').classList.add('hidden');
+            document.getElementById('screenFinal').classList.remove('hidden');
+
+            const score = gameState.score;
+            document.getElementById('finalScoreVal').innerText = score;
+
+            const iconEl = document.getElementById('badgeIcon');
+            const titleEl = document.getElementById('badgeTitle');
+            const descEl = document.getElementById('badgeDesc');
+            const containerEl = document.getElementById('badgeContainer');
+
+            if (score >= 80) {
+                iconEl.innerText = '🥇';
+                titleEl.innerText = 'DETEKTIF ENERGI HEBAT!';
+                titleEl.className = 'font-heading text-2xl font-extrabold text-amber-400';
+                descEl.innerText = '"Selamat! Kamu sangat memahami pentingnya energi dan sumber energi fosil dalam kehidupan sehari-hari."';
+                containerEl.className = 'p-6 rounded-2xl bg-slate-900 text-white max-w-lg mx-auto shadow-xl border-2 border-amber-400 my-4';
+                launchConfetti();
+            } else if (score >= 50) {
+                iconEl.innerText = '🥈';
+                titleEl.innerText = 'DETEKTIF ENERGI ANDAL!';
+                titleEl.className = 'font-heading text-2xl font-extrabold text-blue-400';
+                descEl.innerText = '"Pemahamanmu sudah baik. Terus tingkatkan eksplorasimu tentang energi fosil!"';
+                containerEl.className = 'p-6 rounded-2xl bg-slate-900 text-white max-w-lg mx-auto shadow-xl border-2 border-blue-400 my-4';
+            } else {
+                iconEl.innerText = '🥉';
+                titleEl.innerText = 'DETEKTIF ENERGI PEMULA!';
+                titleEl.className = 'font-heading text-2xl font-extrabold text-slate-300';
+                descEl.innerText = '"Tidak masalah! Pelajari kembali ringkasan materi dan coba lagi misinya!"';
+                containerEl.className = 'p-6 rounded-2xl bg-slate-900 text-white max-w-lg mx-auto shadow-xl border-2 border-slate-500 my-4';
+            }
+        }
+
+        /* Lightweight Confetti Generator */
+        function launchConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#FBBF24', '#3B82F6', '#10B981', '#EC4899', '#8B5CF6'];
+
+            for (let i = 0; i < 100; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 3 + 2,
+                    angle: Math.random() * 360
+                });
+            }
+
+            let animationFrame;
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    p.y += p.speed;
+                    p.angle += 2;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.angle * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+
+                    if (p.y > canvas.height) {
+                        p.y = -20;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+                animationFrame = requestAnimationFrame(render);
+            }
+
+            render();
+            setTimeout(() => {
+                cancelAnimationFrame(animationFrame);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 4000);
+        }
+
+        /* MATERIAL MODAL CONTROLS */
+        function openMaterialModal() {
+            playSound('click');
+            document.getElementById('modalMaterial').classList.remove('hidden');
+        }
+
+        function closeMaterialModal() {
+            playSound('click');
+            document.getElementById('modalMaterial').classList.add('hidden');
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            console.log("Game Detektif Energi Initialized");
+        };
+    </script>
+</body>
+</html>
